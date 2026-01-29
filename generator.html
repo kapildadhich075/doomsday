@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Avengers: Doomsday - Will Return Generator">
   <title>Will Return Generator | Avengers: Doomsday</title>
-  
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&family=Oswald:wght@400;700&family=Roboto+Condensed:wght@400;700&family=Anton&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&family=Oswald:wght@400;700&family=Roboto+Condensed:wght@400;700&family=Anton&display=swap"
+    rel="stylesheet">
   <link href="https://fonts.cdnfonts.com/css/neo-sans-std" rel="stylesheet">
-  
+
   <!-- CSS Libraries -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css">
-  
+
   <!-- Custom Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/generator-page.css">
 </head>
+
 <body class="generator-page">
   <header class="generator-header">
     <nav class="breadcrumb">
@@ -25,7 +29,7 @@
       <span class="separator">/</span>
       <span class="current">Will Return Generator</span>
     </nav>
-    
+
     <div class="header-content">
       <h1 class="page-title">WILL RETURN GENERATOR</h1>
       <p class="page-subtitle">Create Marvel-style end credit animations in seconds</p>
@@ -38,7 +42,7 @@
       <div class="preview-container">
         <div class="canvas-wrapper">
           <canvas id="animation-canvas" width="1920" height="1080"></canvas>
-          
+
           <div class="playback-controls">
             <button id="play-pause" class="control-btn">
               <span class="icon">▶</span>
@@ -57,7 +61,7 @@
             </button>
           </div>
         </div>
-        
+
         <div class="canvas-info">
           <span class="resolution">1920×1080</span>
           <span class="fps">30 FPS</span>
@@ -185,9 +189,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.min.js"></script>
+  <script src="js/ffmpeg/ffmpeg.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-  
+
   <!-- Application Logic -->
   <script src="js/utils.js"></script>
   <script src="js/audio-manager.js"></script>
@@ -196,4 +200,5 @@
   <script src="js/export-handler.js"></script>
   <script src="js/generator-core.js"></script>
 </body>
+
 </html>

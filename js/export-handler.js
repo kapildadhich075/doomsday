@@ -111,8 +111,8 @@ class ExportHandler {
 
           try {
             await ffmpeg.load({
-              coreURL:
-                "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.4/dist/umd/ffmpeg-core.js",
+              coreURL: "js/ffmpeg/ffmpeg-core.js",
+              wasmURL: "js/ffmpeg/ffmpeg-core.wasm",
             });
           } catch (loadError) {
             // If loading FFmpeg core fails (often due to SecurityError when using file://), fallback to WebM
