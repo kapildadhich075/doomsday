@@ -319,6 +319,62 @@ body {
   position: relative;
 }
 
+/* Model Section */
+.model-section {
+  padding: 80px 20px;
+  background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+  position: relative;
+  z-index: 2;
+  text-align: center;
+}
+
+.model-section .section-title {
+  font-family: var(--font-heading);
+  font-size: 48px;
+  margin-bottom: 40px;
+  letter-spacing: 4px;
+  color: var(--highlight-green);
+  text-shadow: 0 0 15px var(--glow-green);
+}
+
+.model-container {
+  width: 100%;
+  max-width: 1000px;
+  height: 600px;
+  margin: 0 auto;
+  background: radial-gradient(circle, rgba(77, 124, 44, 0.1) 0%, transparent 70%);
+  border-radius: 20px;
+  border: 1px solid rgba(77, 124, 44, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+#model-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+#model-canvas:active {
+  cursor: grabbing;
+}
+
+.model-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: 1px solid var(--highlight-green);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-white);
+  pointer-events: none;
+}
+
 /* Teasers Section */
 .teasers-section {
   padding: 80px 20px;
@@ -348,7 +404,8 @@ body {
 .video-card {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  padding-top: 56.25%;
+  /* 16:9 Aspect Ratio */
   background: #000;
   border-radius: 12px;
   overflow: hidden;

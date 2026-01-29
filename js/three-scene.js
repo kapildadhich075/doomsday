@@ -1,5 +1,5 @@
-// Three.js Scene Setup (Doom's Mask + Floating Debris)
-const threeScene = {
+// Three.js Background Scene (Original Mask + Debris)
+const backgroundScene = {
   scene: null,
   camera: null,
   renderer: null,
@@ -7,7 +7,6 @@ const threeScene = {
   debris: [],
   mouse: { x: 0, y: 0 },
   targetMouse: { x: 0, y: 0 },
-  baseScale: 1,
 
   init() {
     this.scene = new THREE.Scene();
@@ -17,7 +16,7 @@ const threeScene = {
       75,
       window.innerWidth / window.innerHeight,
       0.1,
-      1000,
+      1000
     );
     this.camera.position.z = 6;
 
@@ -30,7 +29,7 @@ const threeScene = {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    this.createModel();
+    this.createMask();
     this.createDebris();
     this.addLights();
 
@@ -40,43 +39,29 @@ const threeScene = {
     this.animate();
   },
 
-  createModel() {
-    const loader = new THREE.GLTFLoader();
-    loader.load(
-      "assets/scene.gltf",
-      (gltf) => {
-        this.mask = gltf.scene;
-        
-        // Center and scale the model
-        const box = new THREE.Box3().setFromObject(this.mask);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
-        
-        this.mask.position.set(-center.x, -center.y, -center.z - 2);
-        
-        // Adjust scale based on screen size
-        const maxDim = Math.max(size.x, size.y, size.z);
-        this.baseScale = (window.innerWidth < 768 ? 2.5 : 4) / maxDim;
-        this.mask.scale.set(this.baseScale, this.baseScale, this.baseScale);
-        
-        this.scene.add(this.mask);
-        
-        // Add a subtle glow/emissive effect to the model's children if they have materials
-        this.mask.traverse((child) => {
-          if (child.isMesh) {
-            child.material.envMapIntensity = 1.5;
-            if (child.material.emissive) {
-              child.material.emissive.setHex(0x2d5016);
-              child.material.emissiveIntensity = 0.5;
-            }
-          }
-        });
-      },
-      undefined,
-      (error) => {
-        console.error("Error loading GLTF model:", error);
-      }
-    );
+  createMask() {
+    // Restoring the original "ball" (Low-poly Doom style sphere)
+    const geometry = new THREE.IcosahedronGeometry(1.8, 1);
+    const material = new THREE.MeshPhongMaterial({
+      color: 0x2d5016,
+      emissive: 0x4a7c2c,
+      emissiveIntensity: 0.2,
+      shininess: 100,
+      flatShading: true,
+      wireframe: true,
+    });
+    this.mask = new THREE.Mesh(geometry, material);
+    this.mask.position.set(0, 0, -2);
+    this.scene.add(this.mask);
+
+    const innerGeo = new THREE.SphereGeometry(1.5, 32, 32);
+    const innerMat = new THREE.MeshBasicMaterial({
+      color: 0x4a7c2c,
+      transparent: true,
+      opacity: 0.2,
+    });
+    const innerSphere = new THREE.Mesh(innerGeo, innerMat);
+    this.mask.add(innerSphere);
   },
 
   createDebris() {
@@ -91,32 +76,11 @@ const threeScene = {
       const mesh = new THREE.Mesh(geometry, material);
       const scale = Math.random() * 0.2 + 0.05;
       mesh.scale.set(scale, scale, scale);
-
-      mesh.position.set(
-        (Math.random() - 0.5) * 15,
-        (Math.random() - 0.5) * 15,
-        (Math.random() - 0.5) * 15,
-      );
-
-      mesh.rotation.set(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-      );
-
+      mesh.position.set((Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15, (Math.random() - 0.5) * 15);
       mesh.userData = {
-        rotationSpeed: {
-          x: (Math.random() - 0.5) * 0.01,
-          y: (Math.random() - 0.5) * 0.01,
-          z: (Math.random() - 0.5) * 0.01,
-        },
-        velocity: {
-          x: (Math.random() - 0.5) * 0.005,
-          y: (Math.random() - 0.5) * 0.005,
-          z: (Math.random() - 0.5) * 0.005,
-        },
+        rotationSpeed: { x: (Math.random() - 0.5) * 0.01, y: (Math.random() - 0.5) * 0.01, z: (Math.random() - 0.5) * 0.01 },
+        velocity: { x: (Math.random() - 0.5) * 0.005, y: (Math.random() - 0.5) * 0.005, z: (Math.random() - 0.5) * 0.005 },
       };
-
       this.debris.push(mesh);
       this.scene.add(mesh);
     }
@@ -125,14 +89,9 @@ const threeScene = {
   addLights() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     this.scene.add(ambientLight);
-
     const pointLight = new THREE.PointLight(0x4a7c2c, 3, 20);
     pointLight.position.set(2, 2, 4);
     this.scene.add(pointLight);
-
-    const secondaryLight = new THREE.PointLight(0x2d5016, 2, 15);
-    secondaryLight.position.set(-2, -2, 2);
-    this.scene.add(secondaryLight);
   },
 
   onMouseMove(e) {
@@ -148,48 +107,114 @@ const threeScene = {
 
   animate() {
     requestAnimationFrame(() => this.animate());
-
-    // Lerp mouse for smooth parallax
     this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
     this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
 
-    // Rotate and Pulse Mask
     if (this.mask) {
       this.mask.rotation.y += 0.002;
       this.mask.rotation.x += 0.001;
-
-      // Pulse effect (subtle)
       const time = Date.now() * 0.001;
-      const pulse = 1 + Math.sin(time * 2) * 0.05; 
-      const s = this.baseScale * pulse;
-      this.mask.scale.set(s, s, s);
+      const pulse = Math.sin(time) * 0.05 + 1;
+      this.mask.scale.set(pulse, pulse, pulse);
     }
 
-    // Animate Debris
-    this.debris.forEach((item) => {
+    this.debris.forEach(item => {
       item.rotation.x += item.userData.rotationSpeed.x;
       item.rotation.y += item.userData.rotationSpeed.y;
       item.rotation.z += item.userData.rotationSpeed.z;
-
       item.position.x += item.userData.velocity.x;
       item.position.y += item.userData.velocity.y;
       item.position.z += item.userData.velocity.z;
-
-      // Wrap around bounds
       if (Math.abs(item.position.x) > 8) item.position.x *= -0.9;
       if (Math.abs(item.position.y) > 8) item.position.y *= -0.9;
       if (Math.abs(item.position.z) > 8) item.position.z *= -0.9;
     });
 
-    // Parallax Camera
-    this.camera.position.x +=
-      (this.mouse.x * 2 - this.camera.position.x) * 0.05;
-    this.camera.position.y +=
-      (this.mouse.y * 2 - this.camera.position.y) * 0.05;
+    this.camera.position.x += (this.mouse.x * 2 - this.camera.position.x) * 0.05;
+    this.camera.position.y += (this.mouse.y * 2 - this.camera.position.y) * 0.05;
     this.camera.lookAt(0, 0, 0);
-
     this.renderer.render(this.scene, this.camera);
-  },
+  }
 };
 
-window.addEventListener("DOMContentLoaded", () => threeScene.init());
+// GLTF Interactive Model Viewer Section
+const modelViewer = {
+  scene: null,
+  camera: null,
+  renderer: null,
+  model: null,
+  container: null,
+
+  init() {
+    this.container = document.querySelector('.model-container');
+    if (!this.container) return;
+
+    this.scene = new THREE.Scene();
+    
+    this.camera = new THREE.PerspectiveCamera(45, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+    this.camera.position.set(0, 1, 5);
+
+    const canvas = document.getElementById('model-canvas');
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    this.addLights();
+    this.loadModel();
+
+    window.addEventListener('resize', () => this.onResize());
+    this.animate();
+  },
+
+  addLights() {
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    this.scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+    dirLight.position.set(5, 5, 5);
+    this.scene.add(dirLight);
+
+    const backLight = new THREE.DirectionalLight(0x4a7c2c, 1);
+    backLight.position.set(-5, 0, -5);
+    this.scene.add(backLight);
+  },
+
+  loadModel() {
+    const loader = new THREE.GLTFLoader();
+    loader.load('assets/scene.gltf', (gltf) => {
+      this.model = gltf.scene;
+      
+      const box = new THREE.Box3().setFromObject(this.model);
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      
+      this.model.position.set(-center.x, -center.y, -center.z);
+      
+      const maxDim = Math.max(size.x, size.y, size.z);
+      const scale = 3 / maxDim;
+      this.model.scale.set(scale, scale, scale);
+      
+      this.scene.add(this.model);
+    });
+  },
+
+  onResize() {
+    if (!this.container) return;
+    this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+  },
+
+  animate() {
+    requestAnimationFrame(() => this.animate());
+    if (this.model) {
+      this.model.rotation.y += 0.005;
+    }
+    this.renderer.render(this.scene, this.camera);
+  }
+};
+
+window.addEventListener("DOMContentLoaded", () => {
+  backgroundScene.init();
+  modelViewer.init();
+});
