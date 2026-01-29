@@ -7,6 +7,7 @@ const threeScene = {
   debris: [],
   mouse: { x: 0, y: 0 },
   targetMouse: { x: 0, y: 0 },
+  baseScale: 1,
 
   init() {
     this.scene = new THREE.Scene();
@@ -29,7 +30,7 @@ const threeScene = {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    this.createMask();
+    this.createModel();
     this.createDebris();
     this.addLights();
 
@@ -39,30 +40,43 @@ const threeScene = {
     this.animate();
   },
 
-  createMask() {
-    // Simplified Mask representation (Low-poly Doom style sphere/icosahedron)
-    const geometry = new THREE.IcosahedronGeometry(1.8, 1);
-    const material = new THREE.MeshPhongMaterial({
-      color: 0x2d5016,
-      emissive: 0x4a7c2c,
-      emissiveIntensity: 0.2,
-      shininess: 100,
-      flatShading: true,
-      wireframe: true,
-    });
-    this.mask = new THREE.Mesh(geometry, material);
-    this.mask.position.set(0, 0, -2);
-    this.scene.add(this.mask);
-
-    // Inner glowing sphere
-    const innerGeo = new THREE.SphereGeometry(1.5, 32, 32);
-    const innerMat = new THREE.MeshBasicMaterial({
-      color: 0x4a7c2c,
-      transparent: true,
-      opacity: 0.2,
-    });
-    const innerSphere = new THREE.Mesh(innerGeo, innerMat);
-    this.mask.add(innerSphere);
+  createModel() {
+    const loader = new THREE.GLTFLoader();
+    loader.load(
+      "assets/scene.gltf",
+      (gltf) => {
+        this.mask = gltf.scene;
+        
+        // Center and scale the model
+        const box = new THREE.Box3().setFromObject(this.mask);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        
+        this.mask.position.set(-center.x, -center.y, -center.z - 2);
+        
+        // Adjust scale based on screen size
+        const maxDim = Math.max(size.x, size.y, size.z);
+        this.baseScale = (window.innerWidth < 768 ? 2.5 : 4) / maxDim;
+        this.mask.scale.set(this.baseScale, this.baseScale, this.baseScale);
+        
+        this.scene.add(this.mask);
+        
+        // Add a subtle glow/emissive effect to the model's children if they have materials
+        this.mask.traverse((child) => {
+          if (child.isMesh) {
+            child.material.envMapIntensity = 1.5;
+            if (child.material.emissive) {
+              child.material.emissive.setHex(0x2d5016);
+              child.material.emissiveIntensity = 0.5;
+            }
+          }
+        });
+      },
+      undefined,
+      (error) => {
+        console.error("Error loading GLTF model:", error);
+      }
+    );
   },
 
   createDebris() {
@@ -139,15 +153,16 @@ const threeScene = {
     this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.05;
     this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.05;
 
-    // Rotate Mask
+    // Rotate and Pulse Mask
     if (this.mask) {
       this.mask.rotation.y += 0.002;
       this.mask.rotation.x += 0.001;
 
       // Pulse effect (subtle)
       const time = Date.now() * 0.001;
-      const pulse = Math.sin(time) * 0.05 + 1;
-      this.mask.scale.set(pulse, pulse, pulse);
+      const pulse = 1 + Math.sin(time * 2) * 0.05; 
+      const s = this.baseScale * pulse;
+      this.mask.scale.set(s, s, s);
     }
 
     // Animate Debris

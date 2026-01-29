@@ -8,9 +8,7 @@ const audioManager = {
     // Note: Audio files would normally be in assets/sounds/
     // Using placeholders for now
     this.ambient = new Howl({
-      src: [
-        "https://assets.mixkit.co/music/preview/mixkit-sci-fi-drone-background-908.mp3",
-      ], // Placeholder ominous drone
+      src: ["assets/avengers_endgame.mp3"],
       loop: true,
       volume: 0, // Starts at 0 for fade in
       preload: true,
