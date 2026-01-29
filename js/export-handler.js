@@ -5,9 +5,20 @@ class ExportHandler {
   }
 
   async exportGIF() {
+    // Show loading overlay
+    const overlay = document.getElementById('loading-overlay');
+    const title = document.getElementById('loading-title');
+    const message = document.getElementById('loading-message');
+    const progressBar = document.getElementById('loading-progress-bar');
+    const percentage = document.getElementById('loading-percentage');
+
+    overlay.style.display = 'flex';
+    title.textContent = 'Creating GIF';
+    message.textContent = 'Capturing frames...';
+    progressBar.style.width = '0%';
+    percentage.textContent = '0%';
+
     const btn = document.getElementById("export-gif-btn");
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="icon">⌛</span> Capturing...';
     btn.disabled = true;
 
     const gif = new GIF({
@@ -27,26 +38,55 @@ class ExportHandler {
       this.renderer.render(i);
       gif.addFrame(this.renderer.canvas, { copy: true, delay: delay });
 
-      const progress = Math.round((i / totalFrames) * 100);
-      btn.innerHTML = `<span class="icon">⌛</span> Capturing ${progress}%`;
+      const progress = Math.round((i / totalFrames) * 50); // 50% for capturing
+      progressBar.style.width = progress + '%';
+      percentage.textContent = progress + '%';
+      await new Promise(resolve => setTimeout(resolve, 0)); // Allow UI update
     }
+
+    message.textContent = 'Rendering GIF...';
+
+    gif.on("progress", (p) => {
+      const progress = 50 + Math.round(p * 50); // 50-100% for rendering
+      progressBar.style.width = progress + '%';
+      percentage.textContent = progress + '%';
+    });
 
     gif.on("finished", (blob) => {
       const fileName = `${this.renderer.settings.characterName.replace(/\s+/g, "_")}_returning.gif`;
       saveAs(blob, fileName);
-      btn.innerHTML = originalText;
-      btn.disabled = false;
-      this.renderer.render(); // Reset to current state
+      
+      // Success state
+      title.textContent = 'Success!';
+      message.textContent = 'Your GIF has been downloaded';
+      progressBar.style.width = '100%';
+      percentage.textContent = '100%';
+      
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        btn.disabled = false;
+        this.renderer.render(); // Reset to current state
+      }, 1500);
     });
 
-    btn.innerHTML = '<span class="icon">⌛</span> Rendering GIF...';
     gif.render();
   }
 
   async exportMP4() {
+    // Show loading overlay
+    const overlay = document.getElementById('loading-overlay');
+    const title = document.getElementById('loading-title');
+    const message = document.getElementById('loading-message');
+    const progressBar = document.getElementById('loading-progress-bar');
+    const percentage = document.getElementById('loading-percentage');
+
+    overlay.style.display = 'flex';
+    title.textContent = 'Creating Video';
+    message.textContent = 'Recording animation...';
+    progressBar.style.width = '0%';
+    percentage.textContent = '0%';
+
     const btn = document.getElementById("export-mp4-btn");
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<span class="icon">🎥</span> Recording...';
     btn.disabled = true;
 
     try {
@@ -97,14 +137,23 @@ class ExportHandler {
             );
             const fileNameWebm = `${this.renderer.settings.characterName.replace(/\s+/g, "_")}_returning.webm`;
             saveAs(webmBlob, fileNameWebm);
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-            this.renderer.render();
+            
+            title.textContent = 'Downloaded WebM';
+            message.textContent = 'MP4 conversion unavailable in file:// mode';
+            progressBar.style.width = '100%';
+            
+            setTimeout(() => {
+              overlay.style.display = 'none';
+              btn.disabled = false;
+              this.renderer.render();
+            }, 2000);
             return;
           }
 
           // Convert WebM to MP4 using FFmpeg.wasm
-          btn.innerHTML = '<span class="icon">⌛</span> Converting to MP4...';
+          message.textContent = 'Converting to MP4...';
+          progressBar.style.width = '70%';
+          percentage.textContent = '70%';
 
           const { FFmpeg } = FFmpegWASM;
           const ffmpeg = new FFmpeg();
@@ -120,12 +169,16 @@ class ExportHandler {
             console.error("FFmpeg load failed:", loadError);
             const fileNameWebm = `${this.renderer.settings.characterName.replace(/\s+/g, "_")}_returning.webm`;
             saveAs(webmBlob, fileNameWebm);
-            btn.innerHTML = "❌ Conversion Unavailable (downloaded WebM)";
+            
+            title.textContent = 'Downloaded WebM';
+            message.textContent = 'MP4 conversion unavailable';
+            progressBar.style.width = '100%';
+            
             setTimeout(() => {
-              btn.innerHTML = originalText;
+              overlay.style.display = 'none';
               btn.disabled = false;
               this.renderer.render();
-            }, 4000);
+            }, 2000);
             return;
           }
 
@@ -153,8 +206,15 @@ class ExportHandler {
           const fileName = `${this.renderer.settings.characterName.replace(/\s+/g, "_")}_returning.mp4`;
           saveAs(mp4Blob, fileName);
 
-          btn.innerHTML = originalText;
-          btn.disabled = false;
+          title.textContent = 'Success!';
+          message.textContent = 'Your video has been downloaded';
+          progressBar.style.width = '100%';
+          percentage.textContent = '100%';
+          
+          setTimeout(() => {
+            overlay.style.display = 'none';
+            btn.disabled = false;
+          }, 1500);
         } catch (conversionError) {
           console.error("Conversion Error:", conversionError);
 
@@ -170,23 +230,26 @@ class ExportHandler {
             const fileNameWebm = `${this.renderer.settings.characterName.replace(/\s+/g, "_")}_returning.webm`;
             try {
               saveAs(webmBlob, fileNameWebm);
-              btn.innerHTML = "❌ Conversion Unavailable (downloaded WebM)";
+              title.textContent = 'Downloaded WebM';
+              message.textContent = 'MP4 conversion unavailable';
             } catch (saveErr) {
               console.error("Failed to save fallback WebM:", saveErr);
-              btn.innerHTML = "❌ Conversion Failed";
+              title.textContent = 'Export Failed';
+              message.textContent = 'Could not save video file';
             }
 
             setTimeout(() => {
-              btn.innerHTML = originalText;
+              overlay.style.display = 'none';
               btn.disabled = false;
               this.renderer.render();
-            }, 4000);
+            }, 2000);
           } else {
-            btn.innerHTML = "❌ Conversion Failed";
+            title.textContent = 'Export Failed';
+            message.textContent = 'An error occurred during conversion';
             setTimeout(() => {
-              btn.innerHTML = originalText;
+              overlay.style.display = 'none';
               btn.disabled = false;
-            }, 3000);
+            }, 2000);
           }
         }
       };
@@ -197,6 +260,8 @@ class ExportHandler {
 
       // Stop when animation completes
       this.renderer.onCompleteCallback = () => {
+        progressBar.style.width = '50%';
+        percentage.textContent = '50%';
         setTimeout(() => {
           mediaRecorder.stop();
           this.renderer.onCompleteCallback = null;
@@ -204,11 +269,12 @@ class ExportHandler {
       };
     } catch (err) {
       console.error("Video Export Error:", err);
-      btn.innerHTML = "❌ Export Failed";
+      title.textContent = 'Export Failed';
+      message.textContent = err.message || 'An error occurred';
       setTimeout(() => {
-        btn.innerHTML = originalText;
+        overlay.style.display = 'none';
         btn.disabled = false;
-      }, 3000);
+      }, 2000);
     }
   }
 }

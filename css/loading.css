@@ -1,0 +1,113 @@
+/* Loading Overlay Styles */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.loading-content {
+    text-align: center;
+    padding: 40px;
+    background: rgba(26, 26, 26, 0.9);
+    border-radius: 20px;
+    border: 2px solid rgba(77, 124, 44, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(74, 124, 44, 0.2);
+    min-width: 400px;
+    max-width: 500px;
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 30px;
+    border: 4px solid rgba(77, 124, 44, 0.2);
+    border-top-color: var(--highlight-green);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#loading-title {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    color: var(--highlight-green);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+#loading-message {
+    font-size: 14px;
+    color: var(--text-gray);
+    margin-bottom: 30px;
+}
+
+.loading-progress {
+    margin-top: 20px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--highlight-green), #5ba337);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(74, 124, 44, 0.5);
+}
+
+#loading-percentage {
+    font-family: var(--font-timer);
+    font-size: 16px;
+    color: var(--highlight-green);
+    font-weight: 700;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .loading-content {
+        min-width: 90%;
+        padding: 30px 20px;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+    }
+
+    #loading-title {
+        font-size: 22px;
+    }
+}
