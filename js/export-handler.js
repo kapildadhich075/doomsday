@@ -110,9 +110,10 @@ class ExportHandler {
           const ffmpeg = new FFmpeg();
 
           try {
+            // Use absolute paths from root for reliability in Workers
             await ffmpeg.load({
-              coreURL: "js/ffmpeg/ffmpeg-core.js",
-              wasmURL: "js/ffmpeg/ffmpeg-core.wasm",
+              coreURL: "/js/ffmpeg/ffmpeg-core.js",
+              wasmURL: "/js/ffmpeg/ffmpeg-core.wasm",
             });
           } catch (loadError) {
             // If loading FFmpeg core fails (often due to SecurityError when using file://), fallback to WebM
