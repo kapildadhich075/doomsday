@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Countdown to Avengers: Doomsday - December 18, 2026"
+    />
+    <title>Avengers: Doomsday Countdown | Will Return Generator</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/neo-sans-std" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/countdown.css" />
+    <link rel="stylesheet" href="css/generator.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body>
+    <!-- Particles.js Background -->
+    <div id="particles-js"></div>
+
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1 class="hero-title">DOOMSDAY IS COMING</h1>
+
+      <!-- Countdown Timer -->
+      <div class="countdown-container">
+        <div class="countdown-segment">
+          <span class="countdown-number" id="months">00</span>
+          <span class="countdown-label">MONTHS</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-segment">
+          <span class="countdown-number" id="days">00</span>
+          <span class="countdown-label">DAYS</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-segment">
+          <span class="countdown-number" id="hours">00</span>
+          <span class="countdown-label">HOURS</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-segment">
+          <span class="countdown-number" id="minutes">00</span>
+          <span class="countdown-label">MIN</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-segment">
+          <span class="countdown-number" id="seconds">00</span>
+          <span class="countdown-label">SEC</span>
+        </div>
+      </div>
+
+      <p class="hero-subtitle">The Multiverse Saga Continues</p>
+
+    <!-- Generator CTA -->
+    <div class="hero-cta" style="margin-top: 40px; opacity: 0; transform: translateY(20px);">
+      <a href="generator.html" class="btn btn-primary" style="text-decoration: none; display: inline-flex; height: 60px; padding: 0 40px; font-size: 18px;">
+        <span class="icon" style="margin-right: 10px;">🎬</span>
+        <span class="text">Create Your Will Return Animation</span>
+      </a>
+    </div>
+  </section>
+
+    <!-- Side Navigation -->
+    <nav class="side-nav">
+      <button class="nav-btn" id="watch-live">
+        <span class="icon">▶</span>
+        <span class="label">Watch Live</span>
+      </button>
+      <button class="nav-btn" id="live-chat">
+      <span class="icon">💬</span>
+      <span class="label">Live Chat</span>
+    </button>
+    <button class="nav-btn" onclick="window.location.href='generator.html'">
+      <span class="icon">✨</span>
+      <span class="label">Generator</span>
+    </button>
+    <button class="nav-btn" id="sound-toggle">
+        <span class="icon" id="sound-icon">🔇</span>
+        <span class="label">Sound OFF</span>
+      </button>
+    </nav>
+
+    <!-- MCU Fact Card -->
+    <aside class="mcu-fact-card" id="fact-card">
+      <button class="close-btn" id="close-fact">✕</button>
+      <h3>🎬 MCU Fact of the Day</h3>
+      <p id="fact-content">Loading today's fact...</p>
+      <small id="fact-source"></small>
+      <div class="share-buttons">
+        <button class="share-btn" onclick="shareFact('x')">Share on X</button>
+        <button class="share-btn" onclick="shareFact('fb')">Share on FB</button>
+      </div>
+    </aside>
+
+    <!-- Will Return Generator -->
+    <section class="generator-section">
+      <h2>CREATE YOUR OWN MARVEL "WILL RETURN" ANIMATION</h2>
+      <p class="subtitle">Generate custom Marvel-style end credit animations</p>
+
+      <div class="generator-container">
+        <div class="input-group">
+          <label for="character-name">CHARACTER NAME</label>
+          <input
+            type="text"
+            id="character-name"
+            placeholder="e.g., Steve Rogers"
+            maxlength="30"
+          />
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="preview-canvas" width="1920" height="1080"></canvas>
+        </div>
+
+        <div class="control-buttons">
+          <button class="btn btn-primary" id="preview-btn">
+            <span class="icon">▶</span> Preview
+          </button>
+          <button class="btn btn-secondary" id="export-gif">
+            <span class="icon">📥</span> Export as GIF
+          </button>
+          <button class="btn btn-secondary" id="export-mp4">
+            <span class="icon">🎥</span> Export as MP4
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar">
+      <div class="stat-card">
+        <span class="stat-icon">📅</span>
+        <span class="stat-number" id="stat-days">0</span>
+        <span class="stat-label">Days Until Doomsday</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⏳</span>
+        <div class="progress-container">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="stat-label">Journey to Doomsday</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🎬</span>
+        <span class="stat-number">45</span>
+        <span class="stat-label">Days Until Next Trailer</span>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>When does Avengers: Doomsday come out?</span>
+            <span class="icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <p>
+              Avengers: Doomsday releases in theaters worldwide on December 18,
+              2026.
+            </p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>Who is Doctor Doom?</span>
+            <span class="icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <p>
+              Victor von Doom, the monarch of Latveria, is one of Marvel's most
+              powerful and complex villains, a master of both science and
+              sorcery.
+            </p>
+          </div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-header">
+            <span>Will the original Avengers return?</span>
+            <span class="icon">▼</span>
+          </button>
+          <div class="accordion-content">
+            <p>
+              Robert Downey Jr. is confirmed to return to the MCU stage, but
+              this time as the formidable Doctor Doom!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer/Credits -->
+    <footer class="footer">
+      <p>
+        &copy; 2026 Avengers: Doomsday Fan Hub. Marvel and all related
+        characters are trademarks of Marvel Studios.
+      </p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="js/utils.js"></script>
+    <script src="js/audio-manager.js"></script>
+    <script src="js/three-scene.js"></script>
+    <script src="js/countdown.js"></script>
+    <script src="js/generator.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

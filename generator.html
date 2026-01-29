@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Avengers: Doomsday - Will Return Generator">
+  <title>Will Return Generator | Avengers: Doomsday</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700;900&family=Oswald:wght@400;700&family=Roboto+Condensed:wght@400;700&family=Anton&display=swap" rel="stylesheet">
+  <link href="https://fonts.cdnfonts.com/css/neo-sans-std" rel="stylesheet">
+  
+  <!-- CSS Libraries -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/generator-page.css">
+</head>
+<body class="generator-page">
+  <header class="generator-header">
+    <nav class="breadcrumb">
+      <a href="index.html">← Back to Countdown</a>
+      <span class="separator">/</span>
+      <span class="current">Will Return Generator</span>
+    </nav>
+    
+    <div class="header-content">
+      <h1 class="page-title">WILL RETURN GENERATOR</h1>
+      <p class="page-subtitle">Create Marvel-style end credit animations in seconds</p>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- Left Column: Live Preview -->
+    <div class="preview-column">
+      <div class="preview-container">
+        <div class="canvas-wrapper">
+          <canvas id="animation-canvas" width="1920" height="1080"></canvas>
+          
+          <div class="playback-controls">
+            <button id="play-pause" class="control-btn">
+              <span class="icon">▶</span>
+            </button>
+            <div class="timeline">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+                <div class="playhead" id="playhead"></div>
+              </div>
+              <span class="time-display">
+                <span id="current-time">0:00</span> / <span id="total-time">0:05</span>
+              </span>
+            </div>
+            <button id="restart" class="control-btn">
+              <span class="icon">↻</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="canvas-info">
+          <span class="resolution">1920×1080</span>
+          <span class="fps">30 FPS</span>
+          <span class="duration">5.0s</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons Bar Below Workspace -->
+      <div class="action-bar-workspace">
+        <div class="button-group">
+          <button id="preview-btn" class="btn btn-primary">
+            <span class="icon">▶</span>
+            <span class="text">Preview Animation</span>
+          </button>
+          <button id="reset-btn" class="btn btn-secondary">
+            <span class="icon">🔄</span>
+            <span class="text">Reset</span>
+          </button>
+        </div>
+        <div class="button-group">
+          <button id="export-gif-btn" class="btn btn-export">
+            <span class="icon">📥</span>
+            <span class="text">Export GIF</span>
+          </button>
+          <button id="export-mp4-btn" class="btn btn-export">
+            <span class="icon">🎥</span>
+            <span class="text">Export MP4</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Customization Panel -->
+    <aside class="customization-panel">
+      <!-- Section 1: Character Info -->
+      <div class="panel-section">
+        <h3 class="section-title">Character Information</h3>
+        <div class="input-group">
+          <label for="character-name">Character Name *</label>
+          <input type="text" id="character-name" placeholder="e.g., Victor von Doom" maxlength="40" class="text-input">
+          <span class="char-count" id="name-count">0/40</span>
+        </div>
+      </div>
+
+      <!-- Section 2: Presets -->
+      <div class="panel-section">
+        <h3 class="section-title">Style Preset</h3>
+        <div class="preset-grid">
+          <button class="preset-card active" data-preset="classic">Classic</button>
+          <button class="preset-card" data-preset="inline">In Line</button>
+          <button class="preset-card" data-preset="modern">Modern</button>
+          <button class="preset-card" data-preset="comic">Comic</button>
+          <button class="preset-card" data-preset="infinity">Infinity</button>
+          <button class="preset-card" data-preset="multiverse">Multiverse</button>
+        </div>
+      </div>
+
+      <!-- Section 3: Typography -->
+      <div class="panel-section">
+        <h3 class="section-title">Typography</h3>
+        <div class="input-group">
+          <label for="font-family">Font Family</label>
+          <select id="font-family" class="select-input">
+            <option value="'Neo Sans Std'">Neo Sans (Default)</option>
+            <option value="'Bebas Neue'">Bebas Neue</option>
+            <option value="'Oswald'">Oswald</option>
+            <option value="'Roboto Condensed'">Roboto Condensed</option>
+            <option value="'Anton'">Anton</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="font-size">Font Size (px)</label>
+          <input type="range" id="font-size" min="40" max="200" value="120" class="slider">
+          <span class="slider-value" id="size-val">120px</span>
+        </div>
+        <div class="input-group">
+          <label for="letter-spacing">Letter Spacing (px)</label>
+          <input type="range" id="letter-spacing" min="0" max="40" value="12" class="slider">
+          <span class="slider-value" id="spacing-val">12px</span>
+        </div>
+      </div>
+
+      <!-- Section 4: Colors -->
+      <div class="panel-section">
+        <h3 class="section-title">Colors</h3>
+        <div class="input-group">
+          <label>Text Color</label>
+          <div class="color-picker-wrapper">
+            <div id="text-color-picker"></div>
+            <input type="text" id="text-color-hex" value="#FFFFFF" class="color-input" readonly>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Accent Glow</label>
+          <div class="color-picker-wrapper">
+            <div id="accent-color-picker"></div>
+            <input type="text" id="accent-color-hex" value="#4A7C2C" class="color-input" readonly>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Animation & Effects -->
+      <div class="panel-section">
+        <h3 class="section-title">Visual Effects</h3>
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="vignette-toggle" checked>
+            <span class="checkbox-text">Vignette</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="scanlines-toggle">
+            <span class="checkbox-text">Scanlines</span>
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" id="grain-toggle">
+            <span class="checkbox-text">Film Grain</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- JS Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.12.7/dist/umd/ffmpeg.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  
+  <!-- Application Logic -->
+  <script src="js/utils.js"></script>
+  <script src="js/audio-manager.js"></script>
+  <script src="js/presets-manager.js"></script>
+  <script src="js/canvas-renderer.js"></script>
+  <script src="js/export-handler.js"></script>
+  <script src="js/generator-core.js"></script>
+</body>
+</html>
