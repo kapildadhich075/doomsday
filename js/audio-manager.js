@@ -10,23 +10,28 @@ const audioManager = {
     this.ambient = new Howl({
       src: ["assets/avengers_endgame.mp3"],
       loop: true,
-      volume: 0, // Starts at 0 for fade in
+      volume: 0.3, // Start at 30% volume
       preload: true,
+      html5: true, // Better for local file protocol and large files
+      autoplay: true, // Auto-play on load
     });
 
-    this.ui.click = new Howl({
-      src: [
-        "https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3",
-      ],
-      volume: 0.5,
-    });
+    this.ui.click = { play: () => {} };
+    this.ui.hover = { play: () => {} };
 
-    this.ui.hover = new Howl({
-      src: [
-        "https://assets.mixkit.co/sfx/preview/mixkit-simple-hover-check-1102.mp3",
-      ],
-      volume: 0.2,
-    });
+    // Set audio as enabled by default
+    this.isEnabled = true;
+    
+    // Update UI to show audio is on
+    const toggle = document.getElementById("sound-toggle");
+    const icon = document.getElementById("sound-icon");
+    const label = toggle.querySelector(".label");
+    
+    if (toggle && icon && label) {
+      icon.textContent = "🔊";
+      label.textContent = "Sound ON";
+      toggle.classList.add("active");
+    }
 
     this.setupListeners();
   },

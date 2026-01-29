@@ -1,0 +1,11 @@
+Model Information:
+* title:	Doctor Doom
+* source:	https://sketchfab.com/3d-models/doctor-doom-8b8019a6ac384b48a3c6003a865cf191
+* author:	RadioactiveAG (https://sketchfab.com/RadioactiveAG)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Doctor Doom" (https://sketchfab.com/3d-models/doctor-doom-8b8019a6ac384b48a3c6003a865cf191) by RadioactiveAG (https://sketchfab.com/RadioactiveAG) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

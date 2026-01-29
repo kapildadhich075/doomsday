@@ -144,6 +144,9 @@ const modelViewer = {
   renderer: null,
   model: null,
   container: null,
+  isDragging: false,
+  previousMousePosition: { x: 0, y: 0 },
+  rotation: { x: 0, y: 0 },
 
   init() {
     this.container = document.querySelector('.model-container');
@@ -151,8 +154,8 @@ const modelViewer = {
 
     this.scene = new THREE.Scene();
     
-    this.camera = new THREE.PerspectiveCamera(45, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
-    this.camera.position.set(0, 1, 5);
+    this.camera = new THREE.PerspectiveCamera(20, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+    this.camera.position.set(2, 2, 8);
 
     const canvas = document.getElementById('model-canvas');
     this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
@@ -161,40 +164,135 @@ const modelViewer = {
 
     this.addLights();
     this.loadModel();
+    this.setupMouseControls();
 
     window.addEventListener('resize', () => this.onResize());
     this.animate();
   },
 
+  setupMouseControls() {
+    const canvas = document.getElementById('model-canvas');
+
+    canvas.addEventListener('mousedown', (e) => {
+      this.isDragging = true;
+      this.previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (!this.isDragging) return;
+
+      const deltaX = e.clientX - this.previousMousePosition.x;
+      const deltaY = e.clientY - this.previousMousePosition.y;
+
+      this.rotation.y += deltaX * 0.01;
+      this.rotation.x += deltaY * 0.01;
+
+      // Limit vertical rotation
+      this.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.rotation.x));
+
+      this.previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      this.isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      this.isDragging = false;
+    });
+
+    // Touch support for mobile
+    canvas.addEventListener('touchstart', (e) => {
+      this.isDragging = true;
+      this.previousMousePosition = { 
+        x: e.touches[0].clientX, 
+        y: e.touches[0].clientY 
+      };
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (!this.isDragging) return;
+      e.preventDefault();
+
+      const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
+      const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
+
+      this.rotation.y += deltaX * 0.01;
+      this.rotation.x += deltaY * 0.01;
+
+      this.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.rotation.x));
+
+      this.previousMousePosition = { 
+        x: e.touches[0].clientX, 
+        y: e.touches[0].clientY 
+      };
+    });
+
+    canvas.addEventListener('touchend', () => {
+      this.isDragging = false;
+    });
+  },
+
   addLights() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    // Brighter ambient light for overall visibility
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
     this.scene.add(ambientLight);
     
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2);
-    dirLight.position.set(5, 5, 5);
-    this.scene.add(dirLight);
+    // Main spotlight from front-top
+    const mainSpotlight = new THREE.SpotLight(0xffffff, 3);
+    mainSpotlight.position.set(2, 8, 8);
+    mainSpotlight.angle = Math.PI / 6;
+    mainSpotlight.penumbra = 0.3;
+    mainSpotlight.decay = 2;
+    mainSpotlight.distance = 50;
+    this.scene.add(mainSpotlight);
 
-    const backLight = new THREE.DirectionalLight(0x4a7c2c, 1);
-    backLight.position.set(-5, 0, -5);
-    this.scene.add(backLight);
+    // Key light from the right
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2);
+    keyLight.position.set(8, 5, 5);
+    this.scene.add(keyLight);
+
+    // Rim light from behind for dramatic edge lighting
+    const rimLight = new THREE.DirectionalLight(0x4a7c2c, 1.5);
+    rimLight.position.set(-5, 3, -8);
+    this.scene.add(rimLight);
+
+    // Fill light from below to eliminate harsh shadows
+    const fillLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    fillLight.position.set(0, -5, 5);
+    this.scene.add(fillLight);
+
+    // Side accent light with green tint
+    const accentLight = new THREE.PointLight(0x4a7c2c, 2, 20);
+    accentLight.position.set(-8, 2, 2);
+    this.scene.add(accentLight);
+
+    // Additional front point light for face illumination
+    const frontLight = new THREE.PointLight(0xffffff, 1.5, 15);
+    frontLight.position.set(2, 3, 10);
+    this.scene.add(frontLight);
   },
 
   loadModel() {
     const loader = new THREE.GLTFLoader();
-    loader.load('assets/scene.gltf', (gltf) => {
+    loader.load('assets/doctor_doom.glb', (gltf) => {
       this.model = gltf.scene;
       
       const box = new THREE.Box3().setFromObject(this.model);
       const center = box.getCenter(new THREE.Vector3());
       const size = box.getSize(new THREE.Vector3());
       
-      this.model.position.set(-center.x, -center.y, -center.z);
+      // Center the model at origin, shift slightly right
+      this.model.position.set(-center.x + 0.5, -center.y + size.y * 0.3, -center.z);
       
       const maxDim = Math.max(size.x, size.y, size.z);
-      const scale = 3 / maxDim;
+      const scale = 6 / maxDim; // Increased from 4 to 6 for bigger size
       this.model.scale.set(scale, scale, scale);
       
       this.scene.add(this.model);
+      
+      // Point camera at the model (adjusted for right shift)
+      this.camera.lookAt(0.5, size.y * 0.3, 0);
     });
   },
 
@@ -207,9 +305,13 @@ const modelViewer = {
 
   animate() {
     requestAnimationFrame(() => this.animate());
+    
+    // Apply user-controlled rotation instead of automatic
     if (this.model) {
-      this.model.rotation.y += 0.005;
+      this.model.rotation.y = this.rotation.y;
+      this.model.rotation.x = this.rotation.x;
     }
+    
     this.renderer.render(this.scene, this.camera);
   }
 };
